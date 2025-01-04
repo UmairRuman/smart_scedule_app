@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "186906050704",
+    "project_id": "smart-schedule-app-64439",
+    "storage_bucket": "smart-schedule-app-64439.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:186906050704:android:50d9de3e3ca8f94b695815",
+        "android_client_info": {
+          "package_name": "com.example.smart_club_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBBiWWmx3MTc1hfQQNGwkYblEF7tNPLL9c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:186906050704:android:09cba1a224d400da695815",
+        "android_client_info": {
+          "package_name": "com.example.smart_schedule_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBBiWWmx3MTc1hfQQNGwkYblEF7tNPLL9c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
