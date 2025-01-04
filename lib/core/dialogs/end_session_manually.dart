@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lottie/lottie.dart';
-import 'package:smart_club_app/pages/controllers/session_notifier.dart';
+import 'package:smart_club_app/controllers/session_notifier.dart';
 import 'package:smart_club_app/pages/welcome_page/view/welcome_page.dart'; // For animations
 
 void endSessionManually(BuildContext context, WidgetRef ref) {

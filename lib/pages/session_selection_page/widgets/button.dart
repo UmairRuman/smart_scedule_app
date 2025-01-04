@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:smart_club_app/pages/controllers/session_notifier.dart';
+import 'package:smart_club_app/controllers/session_notifier.dart';
+import 'package:smart_club_app/pages/add_devices_page/view/add_device_page.dart';
 import 'package:smart_club_app/pages/timer_page/view/timer_page.dart';
 
 class StartSessionButton extends ConsumerWidget {
@@ -40,6 +41,33 @@ class StartSessionButton extends ConsumerWidget {
       ),
       child: const Text(
         'Start Session',
+        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+      ),
+    );
+  }
+}
+
+class BtnAddDevice extends StatelessWidget {
+  const BtnAddDevice({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      onPressed: () {
+        Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => const AddDevicesTab(),
+        ));
+      },
+      style: ElevatedButton.styleFrom(
+        foregroundColor: Colors.black,
+        backgroundColor: Colors.tealAccent,
+        padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+      ),
+      child: const Text(
+        'Add Devices',
         style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
       ),
     );

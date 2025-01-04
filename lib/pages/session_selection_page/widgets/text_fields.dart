@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:form_validation/form_validation.dart';
-import 'package:smart_club_app/pages/controllers/session_notifier.dart';
+import 'package:smart_club_app/controllers/session_notifier.dart';
 
 class NameTextField extends ConsumerWidget {
   const NameTextField({super.key});

@@ -3,7 +3,7 @@ import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:smart_club_app/Notifiers/music_player_notifier.dart';
-import 'package:smart_club_app/pages/controllers/session_notifier.dart';
+import 'package:smart_club_app/controllers/session_notifier.dart';
 import 'package:smart_club_app/pages/timer_page/controller/edit_mode_provider.dart';
 import 'package:smart_club_app/pages/timer_page/widgets/global_methods.dart';
 import 'package:smart_club_app/pages/timer_page/widgets/music_player_builder.dart';

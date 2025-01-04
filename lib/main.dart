@@ -1,9 +1,18 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:smart_club_app/firebase_options.dart';
 import 'package:smart_club_app/pages/welcome_page/view/welcome_page.dart';
+import 'package:smart_club_app/util/theme.dart';
 
-void main() {
+const globalUserId = "Macha Dev";
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(ProviderScope(child: const ClubApp()));
 }
 
@@ -16,11 +25,7 @@ class ClubApp extends StatelessWidget {
         [DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData.dark().copyWith(
-        scaffoldBackgroundColor: const Color(0xFF121212),
-        primaryColor: const Color(0xFF1F1F1F),
-        hintColor: Colors.tealAccent,
-      ),
+      theme: myTheme,
       home: const WelcomePage(),
     );
   }

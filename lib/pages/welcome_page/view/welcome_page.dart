@@ -47,7 +47,9 @@ class _WelcomePageState extends State<WelcomePage>
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => const SessionSelectionPage(),
+              builder: (context) {
+                return const SessionSelectionPage();
+              },
             ),
           );
         },

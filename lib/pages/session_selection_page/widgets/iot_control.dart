@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:smart_club_app/pages/bulbs_page/view/bulb_page.dart';
+import 'package:smart_club_app/pages/fan_page/view/fan_page.dart';
 
-Widget buildIotControls() {
+Widget buildIotControls(BuildContext context) {
   return Container(
     padding: const EdgeInsets.all(10),
     decoration: BoxDecoration(
@@ -14,31 +16,39 @@ Widget buildIotControls() {
         ),
       ],
     ),
-    child: const Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        Column(
-          children: [
-            Icon(Icons.lightbulb_outline, color: Colors.tealAccent, size: 30),
-            SizedBox(height: 5),
-            Text('Lights', style: TextStyle(color: Colors.white)),
-          ],
-        ),
-        Column(
-          children: [
-            Icon(Icons.wb_sunny, color: Colors.tealAccent, size: 30),
-            SizedBox(height: 5),
-            Text('Fans', style: TextStyle(color: Colors.white)),
-          ],
-        ),
-        Column(
-          children: [
-            Icon(Icons.ac_unit, color: Colors.tealAccent, size: 30),
-            SizedBox(height: 5),
-            Text('AC', style: TextStyle(color: Colors.white)),
-          ],
-        ),
-      ],
+    child: InkWell(
+      onTap: () {
+        Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => const BulbPage(),
+        ));
+      },
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          Column(
+            children: [
+              Icon(Icons.lightbulb_outline,
+                  color: const Color.fromARGB(255, 26, 42, 38), size: 30),
+              SizedBox(height: 5),
+              Text('Lights', style: TextStyle(color: Colors.white)),
+            ],
+          ),
+          InkWell(
+            onTap: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => const FansPage(),
+              ));
+            },
+            child: Column(
+              children: [
+                Icon(Icons.wb_sunny, color: Colors.tealAccent, size: 30),
+                SizedBox(height: 5),
+                Text('Fans', style: TextStyle(color: Colors.white)),
+              ],
+            ),
+          ),
+        ],
+      ),
     ),
   );
 }
