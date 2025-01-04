@@ -16,7 +16,8 @@ class FansPageStateController extends Notifier<FanPageStates> {
     return FanPageIntialState();
   }
 
-  void getAllFans(String deviceType) async {
+  Future<void> getAllFans(String deviceType) async {
+    await Future.delayed(const Duration(seconds: 2));
     state = FanPageLoadingState();
     try {
       var listOfDevices =

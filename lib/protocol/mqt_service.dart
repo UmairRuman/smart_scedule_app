@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:fluttertoast/fluttertoast.dart';
-
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
 import 'package:smart_club_app/main.dart';
@@ -21,7 +20,7 @@ class MqttService {
 
   MqttService._internal()
       : client = MqttServerClient('test.mosquitto.org',
-            'flutter_client_${DateTime.now().millisecondsSinceEpoch}') {
+            '${globalUserId}_${DateTime.now().millisecondsSinceEpoch}') {
     client.port = 1883;
     client.keepAlivePeriod = 30;
     client.logging(on: true);
@@ -90,8 +89,8 @@ class MqttService {
         MqttDisconnectionOrigin.solicited) {
       log('Disconnection was requested by the client.');
     } else {
-      Fluttertoast.showToast(
-          msg: 'MQTT disconnected unexpectedly. Reconnecting...');
+      // Fluttertoast.showToast(
+      //     msg: 'MQTT disconnected unexpectedly. Reconnecting...');
       _scheduleReconnect();
     }
   }

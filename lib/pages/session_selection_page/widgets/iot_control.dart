@@ -27,8 +27,7 @@ Widget buildIotControls(BuildContext context) {
         children: [
           Column(
             children: [
-              Icon(Icons.lightbulb_outline,
-                  color: const Color.fromARGB(255, 26, 42, 38), size: 30),
+              Icon(Icons.lightbulb, color: Colors.tealAccent, size: 30),
               SizedBox(height: 5),
               Text('Lights', style: TextStyle(color: Colors.white)),
             ],

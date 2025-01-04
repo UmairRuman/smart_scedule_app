@@ -4,8 +4,9 @@ import 'package:smart_club_app/collections/device_collection.dart';
 import 'package:smart_club_app/core/dialogs/progress_dialog.dart';
 import 'package:smart_club_app/main.dart';
 import 'package:smart_club_app/model/device.dart';
-import 'package:smart_club_app/pages/add_devices_page/controllers/device_state_change_notifier.dart';
 import 'package:smart_club_app/pages/add_devices_page/controllers/new_deviceType_addition_notifier.dart';
+import 'package:smart_club_app/pages/bulbs_page/controller/bulb_page_state_controller.dart';
+import 'package:smart_club_app/pages/fan_page/controller/fan_page_state_controller.dart';
 import 'package:smart_club_app/util/hexa_into_number.dart';
 
 // Define the NotifierProvider
@@ -54,7 +55,8 @@ class DeviceAdditionNotifier extends Notifier<String> {
     );
 
     await deviceCollection.addDevice(userId: globalUserId, device: device);
-    await ref.read(deviceStateProvider.notifier).getAllDevices(ref);
+    await ref.read(fansPageStateProvider.notifier).getAllFans("Fan");
+    await ref.read(bulbsPageStateProvider.notifier).getAllBulbs("Bulb");
     Navigator.of(context).pop();
     // Notify UI components to update, if needed
     state = "Change";

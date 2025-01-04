@@ -1,41 +1,80 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:smart_club_app/main.dart';
+import 'package:smart_club_app/pages/bulbs_page/controller/bulb_page_state_controller.dart';
+import 'package:smart_club_app/pages/fan_page/controller/fan_page_state_controller.dart';
 import 'package:smart_club_app/pages/session_selection_page/view/session_selection.dart';
+import 'package:smart_club_app/protocol/Firestore_mqtt_Bridge.dart';
+import 'package:smart_club_app/protocol/mqt_service.dart';
 
-class WelcomePage extends StatefulWidget {
+class WelcomePage extends ConsumerStatefulWidget {
   const WelcomePage({super.key});
 
   @override
-  _WelcomePageState createState() => _WelcomePageState();
+  WelcomePageState createState() => WelcomePageState();
 }
 
-class _WelcomePageState extends State<WelcomePage>
-    with SingleTickerProviderStateMixin {
+class WelcomePageState extends ConsumerState<WelcomePage>
+    with TickerProviderStateMixin {
+  final MqttService _mqttService = MqttService();
   late AnimationController _controller;
   late Animation<double> _fadeAnimation;
+  late AnimationController _blinkController;
+  late Animation<double> _blinkAnimation;
 
   @override
   void initState() {
     super.initState();
 
-    // Initialize Animation Controller
+    startListeningToFirestore(
+        context, globalUserId, _mqttService); // Listen to Firestore changes
+    // Connect to MQTT and subscribe to topics
+    _mqttService.connect().then((_) {
+      // Subscribe to user-specific topics using wildcards
+      final userId =
+          globalUserId; // Replace with dynamic user ID for multi-user apps
+      final topic =
+          'user/$userId/device/+/status'; // Wildcard for all user devices
+      // await Future.delayed(const Duration(seconds: 3));
+      _mqttService.subscribeToTopic(topic);
+    });
+
+    //Getting all devices
+    getAllDevices();
+
+    // Initialize Fade Animation Controller
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 2),
     );
 
-    // Define Fade Animation
     _fadeAnimation = CurvedAnimation(
       parent: _controller,
       curve: Curves.easeIn,
     );
 
-    // Start the animation
+    // Start the fade animation
     _controller.forward();
+
+    // Initialize Blinking Animation Controller
+    _blinkController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 1),
+    )..repeat(reverse: true);
+
+    _blinkAnimation =
+        Tween<double>(begin: 0.0, end: 1.0).animate(_blinkController);
+  }
+
+  void getAllDevices() async {
+    await ref.read(fansPageStateProvider.notifier).getAllFans("Fan");
+    await ref.read(bulbsPageStateProvider.notifier).getAllBulbs("Bulb");
   }
 
   @override
   void dispose() {
     _controller.dispose();
+    _blinkController.dispose();
     super.dispose();
   }
 
@@ -89,10 +128,10 @@ class _WelcomePageState extends State<WelcomePage>
               Center(
                 child: FadeTransition(
                   opacity: _fadeAnimation,
-                  child: const Column(
+                  child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(
+                      const Text(
                         'Welcome to the Club!',
                         style: TextStyle(
                           color: Colors.tealAccent,
@@ -108,12 +147,16 @@ class _WelcomePageState extends State<WelcomePage>
                         ),
                         textAlign: TextAlign.center,
                       ),
-                      SizedBox(height: 20),
-                      Text(
-                        'Tap anywhere to proceed',
-                        style: TextStyle(
-                          color: Colors.white70,
-                          fontSize: 18.0,
+                      const SizedBox(height: 20),
+                      // Blinking Text
+                      FadeTransition(
+                        opacity: _blinkAnimation,
+                        child: const Text(
+                          'Tap anywhere to proceed',
+                          style: TextStyle(
+                            color: Colors.white70,
+                            fontSize: 22.0,
+                          ),
                         ),
                       ),
                     ],

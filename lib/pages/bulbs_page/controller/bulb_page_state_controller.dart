@@ -16,7 +16,8 @@ class BulbsPageStateController extends Notifier<BulbPageStates> {
     return BulbPageIntialState();
   }
 
-  void getAllBulbs(String deviceType) async {
+  Future<void> getAllBulbs(String deviceType) async {
+    await Future.delayed(const Duration(seconds: 2));
     state = BulbPageLoadingState();
     try {
       var listOfDevices =
