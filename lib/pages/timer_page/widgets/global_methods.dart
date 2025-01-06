@@ -3,11 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_club_app/Notifiers/music_player_provider.dart';
 import 'package:smart_club_app/pages/timer_page/controller/edit_mode_provider.dart';
 
-void playMusic(String url, WidgetRef ref) async {
-  final player = ref.read(audioPlayerProvider);
-  await player.setUrl(url);
-  player.play();
-}
+// void playMusic(String url, WidgetRef ref) async {
+//   final player = ref.read(audioPlayerProvider);
+//   await player.setUrl(url);
+//   player.play();
+// }
 
 Future<void> toggleEditMode(BuildContext context, WidgetRef ref) async {
   final isEditMode = ref.watch(editModeProvider);

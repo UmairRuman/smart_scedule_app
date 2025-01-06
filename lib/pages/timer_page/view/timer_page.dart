@@ -41,7 +41,8 @@ class _TimerPageState extends ConsumerState<TimerPage> {
     final isEditMode = ref.watch(editModeProvider);
     final selectedMusic = ref.watch(musicProvider).firstWhere(
           (music) => music.isSelected,
-          orElse: () => Music(id: '', title: '', url: '', isSelected: false),
+          orElse: () => Music(
+              id: '', title: '', url: '', isAsset: false, isSelected: false),
         );
 
     return Scaffold(
@@ -63,10 +64,7 @@ class _TimerPageState extends ConsumerState<TimerPage> {
       body: Center(
         child: session != null
             ? isEditMode
-                ? CustomNeumorphicMusicPlayer(
-                    selectedMusic: selectedMusic,
-                    ref: ref,
-                  )
+                ? CustomNeumorphicMusicPlayer()
                 : buildTimerWithDetails(
                     session, selectedMusic, endTime, context)
             : const Text('No active session'),

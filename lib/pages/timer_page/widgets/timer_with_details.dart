@@ -8,7 +8,7 @@ Widget buildTimerWithDetails(
     mainAxisAlignment: MainAxisAlignment.center,
     children: [
       Text(
-        'Session: ${session.name}',
+        'Session Owner: ${session.name}',
         style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
       ),
       const SizedBox(height: 10),

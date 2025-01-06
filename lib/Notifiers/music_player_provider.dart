@@ -1,54 +1,102 @@
+import 'dart:developer';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
 
-/// A provider for the audio player
-final audioPlayerProvider = Provider<AudioPlayerNotifier>((ref) {
-  return AudioPlayerNotifier();
-});
+/// Audio Player Provider
+final audioPlayerProvider =
+    NotifierProvider<AudioPlayerNotifier, MusicPlayerStates>(
+        AudioPlayerNotifier.new);
 
-/// A notifier to manage audio playback
-class AudioPlayerNotifier {
-  final AudioPlayer _audioPlayer = AudioPlayer();
+class AudioPlayerNotifier extends Notifier<MusicPlayerStates> {
+  bool isMusicPlaying = true;
+  double currentVolume = 0.5;
+  final AudioPlayer audioPlayer = AudioPlayer();
 
-  /// Play a track from a given URL
-  Future<void> setUrl(String url) async {
+  @override
+  MusicPlayerStates build() {
+    return MusicPlayerStopState();
+  }
+
+  /// Load a track by URL
+  Future<void> setSource(String source, {bool isAsset = false}) async {
     try {
-      await _audioPlayer.setUrl(url);
+      if (isAsset) {
+        await audioPlayer.setAsset(source);
+      } else {
+        await audioPlayer.setFilePath(source);
+      }
+      state = MusicPlayerReadyState(source);
     } catch (e) {
-      print('Error loading audio URL: $e');
+      // Handle error
     }
   }
 
-  /// Play the audio
-  void play() {
-    _audioPlayer.play();
+  /// Play the current track
+  void play() async {
+    if (!isPlaying) {
+      await audioPlayer.play();
+      isMusicPlaying = true;
+      state = MusicPlayerStartState();
+    }
   }
 
-  /// Pause the audio
-  void pause() {
-    _audioPlayer.pause();
+  /// Pause the current track
+  void pause() async {
+    if (isPlaying) {
+      await audioPlayer.pause();
+      isMusicPlaying = false;
+      state = MusicPlayerPauseState();
+    }
   }
 
-  /// Stop the audio
-  void stop() {
-    _audioPlayer.stop();
+  /// Stop the playback
+  void stop() async {
+    await audioPlayer.stop();
+    state = MusicPlayerStopState();
   }
 
-  /// Dispose of the audio player when not needed
+  /// Set volume
+  void setVolume(double volume) async {
+    await audioPlayer.setVolume(volume);
+    currentVolume = audioPlayer.volume;
+    state = MusicPlayerVolumeChangeState(currentVolume: currentVolume);
+  }
+
+  /// Dispose the player when not needed
   void dispose() {
-    _audioPlayer.dispose();
+    audioPlayer.dispose();
   }
 
-  /// Check if audio is currently playing
-  bool get isPlaying => _audioPlayer.playing;
+  /// Track playback position
+  Stream<Duration> get positionStream => audioPlayer.positionStream;
+
+  /// Track total duration
+  Stream<Duration?> get durationStream => audioPlayer.durationStream;
+
+  /// Check if audio is playing
+  bool get isPlaying => audioPlayer.playing;
 
   /// Check if audio is paused
-  bool get isPaused =>
-      !_audioPlayer.playing && _audioPlayer.currentIndex != null;
+  bool get isPaused => !audioPlayer.playing && audioPlayer.currentIndex != null;
+}
 
-  /// Get the current playback position
-  Stream<Duration> get positionStream => _audioPlayer.positionStream;
+/// Music Player States
+abstract class MusicPlayerStates {
+  const MusicPlayerStates();
+}
 
-  /// Get the total duration of the current track
-  Stream<Duration?> get durationStream => _audioPlayer.durationStream;
+class MusicPlayerStopState extends MusicPlayerStates {}
+
+class MusicPlayerStartState extends MusicPlayerStates {}
+
+class MusicPlayerPauseState extends MusicPlayerStates {}
+
+class MusicPlayerVolumeChangeState extends MusicPlayerStates {
+  final double currentVolume;
+  const MusicPlayerVolumeChangeState({required this.currentVolume});
+}
+
+class MusicPlayerReadyState extends MusicPlayerStates {
+  final String url;
+  const MusicPlayerReadyState(this.url);
 }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fullscreen_window/fullscreen_window.dart';
+import 'package:smart_club_app/core/test_function.dart';
 import 'package:smart_club_app/firebase_options.dart';
 import 'package:smart_club_app/pages/welcome_page/view/welcome_page.dart';
 import 'package:smart_club_app/util/theme.dart';
@@ -22,6 +23,7 @@ class ClubApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    testFileAccess();
     FullScreenWindow.setFullScreen(true);
     SystemChrome.setPreferredOrientations(
         [DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]);

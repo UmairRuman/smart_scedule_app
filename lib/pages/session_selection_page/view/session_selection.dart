@@ -22,17 +22,20 @@ class SessionSelectionPage extends ConsumerWidget {
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
         ),
         actions: [
-          Row(
-            children: [
-              const Text('Admin Mode'),
-              Switch(
-                value: isAdminMode,
-                onChanged: (_) => ref
-                    .read(adminModeProvider.notifier)
-                    .toggleAdminMode(context),
-                activeColor: Colors.teal,
-              ),
-            ],
+          Padding(
+            padding: const EdgeInsets.only(right: 8.0),
+            child: Row(
+              children: [
+                const Text('Admin Mode'),
+                Switch(
+                  value: isAdminMode,
+                  onChanged: (_) => ref
+                      .read(adminModeProvider.notifier)
+                      .toggleAdminMode(context),
+                  activeColor: Colors.teal,
+                ),
+              ],
+            ),
           ),
         ],
         centerTitle: true,
@@ -72,8 +75,16 @@ class SessionSelectionPage extends ConsumerWidget {
               flex: 1,
               child: ListView(
                 children: [
-                  buildSectionTitle('Select Music'),
-                  buildMusicSelection(ref),
+                  Row(
+                    children: [
+                      buildSectionTitle('Select Music'),
+                      isAdminMode ? const Spacer() : SizedBox(),
+                      isAdminMode ? BtnAddMusic() : SizedBox()
+                    ],
+                  ),
+                  isAdminMode ? const SizedBox(height: 10) : SizedBox(),
+                  //Music Selection Builder
+                  MusicSelectionBuilder(),
                   const SizedBox(height: 20),
                   const Center(
                     child: StartSessionButton(),

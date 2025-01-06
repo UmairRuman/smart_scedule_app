@@ -1,50 +1,61 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_club_app/Notifiers/music_player_notifier.dart';
+import 'package:smart_club_app/Notifiers/music_player_provider.dart';
 
-Widget buildMusicSelection(WidgetRef ref) {
-  final musicList = ref.watch(musicProvider);
+class MusicSelectionBuilder extends ConsumerWidget {
+  const MusicSelectionBuilder({super.key});
 
-  return Container(
-    padding: const EdgeInsets.all(10),
-    decoration: BoxDecoration(
-      color: const Color(0xFF1F1F1F),
-      borderRadius: BorderRadius.circular(10),
-      boxShadow: const [
-        BoxShadow(
-          color: Colors.black45,
-          blurRadius: 5,
-          offset: Offset(2, 2),
-        ),
-      ],
-    ),
-    child: ListView.builder(
-      shrinkWrap: true,
-      itemCount: musicList.length,
-      itemBuilder: (context, index) {
-        final music = musicList[index];
-        return Column(
-          children: [
-            ListTile(
-              leading: const Icon(Icons.music_note, color: Colors.tealAccent),
-              title: Text(
-                music.title,
-                style: const TextStyle(color: Colors.white, fontSize: 16),
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final musicList = ref.watch(musicProvider);
+    return Container(
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: const Color(0xFF1F1F1F),
+        borderRadius: BorderRadius.circular(10),
+        boxShadow: const [
+          BoxShadow(
+            color: Colors.black45,
+            blurRadius: 5,
+            offset: Offset(2, 2),
+          ),
+        ],
+      ),
+      child: ListView.builder(
+        shrinkWrap: true,
+        itemCount: musicList.length,
+        itemBuilder: (context, index) {
+          final music = musicList[index];
+          return Column(
+            children: [
+              ListTile(
+                leading: const Icon(Icons.music_note, color: Colors.tealAccent),
+                title: Text(
+                  music.title,
+                  style: const TextStyle(color: Colors.white, fontSize: 16),
+                ),
+                trailing: Icon(
+                  music.isSelected
+                      ? Icons.check_circle
+                      : Icons.check_circle_outline,
+                  color: Colors.tealAccent,
+                ),
+                onTap: () {
+                  ref
+                      .read(audioPlayerProvider.notifier)
+                      .setSource(music.url, isAsset: music.isAsset);
+                  ref
+                      .read(musicProvider.notifier)
+                      .selectMusic(musicList[index].id);
+                },
               ),
-              trailing: Icon(
-                music.isSelected
-                    ? Icons.check_circle
-                    : Icons.check_circle_outline,
-                color: Colors.tealAccent,
-              ),
-              onTap: () =>
-                  ref.read(musicProvider.notifier).selectMusic(music.id),
-            ),
-            if (index < musicList.length - 1)
-              const Divider(color: Colors.white54),
-          ],
-        );
-      },
-    ),
-  );
+              if (index < musicList.length - 1)
+                const Divider(color: Colors.white54),
+            ],
+          );
+        },
+      ),
+    );
+  }
 }
