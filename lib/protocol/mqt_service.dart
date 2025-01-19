@@ -1,9 +1,11 @@
 import 'dart:async';
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
+import 'package:smart_club_app/core/functions/test_function.dart';
 import 'package:smart_club_app/main.dart';
 
 class MqttService {
@@ -21,8 +23,22 @@ class MqttService {
   MqttService._internal()
       : client = MqttServerClient('test.mosquitto.org',
             '${globalUserId}_${DateTime.now().millisecondsSinceEpoch}') {
-    client.port = 1883;
+    client.port = 1883; // Use the secure port
     client.keepAlivePeriod = 30;
+    client.secure = true; // Enable secure connection
+
+    // Load the certificates
+    Future.wait([
+      writeAssetToFile('assets/certificates/mosquitto.org.crt', 'ca.crt'),
+      writeAssetToFile('assets/certificates/client.crt', 'client.crt'),
+      writeAssetToFile('assets/certificates/client.key', 'client.key'),
+    ]).then((filePaths) {
+      client.securityContext = SecurityContext.defaultContext
+        ..setTrustedCertificates(filePaths[0]) // CA cert
+        ..useCertificateChain(filePaths[1]) // Client cert
+        ..usePrivateKey(filePaths[2]); // Private key
+    });
+
     client.logging(on: true);
     client.onDisconnected = _onDisconnected;
     client.onConnected = _onConnected;

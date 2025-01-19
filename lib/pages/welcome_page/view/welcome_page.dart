@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:smart_club_app/controllers/all_device_state_controller.dart';
 import 'package:smart_club_app/main.dart';
-import 'package:smart_club_app/pages/bulbs_page/controller/bulb_page_state_controller.dart';
-import 'package:smart_club_app/pages/fan_page/controller/fan_page_state_controller.dart';
 import 'package:smart_club_app/pages/session_selection_page/view/session_selection.dart';
 import 'package:smart_club_app/protocol/Firestore_mqtt_Bridge.dart';
 import 'package:smart_club_app/protocol/mqt_service.dart';
@@ -29,7 +28,7 @@ class WelcomePageState extends ConsumerState<WelcomePage>
     startListeningToFirestore(
         context, globalUserId, _mqttService); // Listen to Firestore changes
     // Connect to MQTT and subscribe to topics
-    _mqttService.connect().then((_) {
+    _mqttService.connect().then((_) async {
       // Subscribe to user-specific topics using wildcards
       final userId =
           globalUserId; // Replace with dynamic user ID for multi-user apps
@@ -67,8 +66,9 @@ class WelcomePageState extends ConsumerState<WelcomePage>
   }
 
   void getAllDevices() async {
-    await ref.read(fansPageStateProvider.notifier).getAllFans("Fan");
-    await ref.read(bulbsPageStateProvider.notifier).getAllBulbs("Bulb");
+    // await ref.read(fansPageStateProvider.notifier).getAllFans("Fan");
+    // await ref.read(bulbsPageStateProvider.notifier).getAllBulbs("Bulb");
+    await ref.read(allDeviceStateProvider.notifier).getAlldevices();
   }
 
   @override
@@ -135,7 +135,7 @@ class WelcomePageState extends ConsumerState<WelcomePage>
                         'Welcome to the Club!',
                         style: TextStyle(
                           color: Colors.tealAccent,
-                          fontSize: 32.0,
+                          fontSize: 55.0,
                           fontWeight: FontWeight.bold,
                           shadows: [
                             Shadow(
@@ -155,7 +155,7 @@ class WelcomePageState extends ConsumerState<WelcomePage>
                           'Tap anywhere to proceed',
                           style: TextStyle(
                             color: Colors.white70,
-                            fontSize: 22.0,
+                            fontSize: 35.0,
                           ),
                         ),
                       ),

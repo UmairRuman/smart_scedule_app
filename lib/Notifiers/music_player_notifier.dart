@@ -99,6 +99,12 @@ class MusicNotifier extends Notifier<List<Music>> {
     }).toList();
   }
 
+  void unSelectAllMusic() {
+    state = state.map((music) {
+      return music.copyWith(isSelected: false);
+    }).toList();
+  }
+
   void uploadMusic(String path, String title) {
     final newMusic = Music(
       id: path,

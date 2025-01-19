@@ -28,6 +28,16 @@ class FansPageStateController extends Notifier<FanPageStates> {
       state = FanPageErrorState(error: e.toString());
     }
   }
+
+  Future<void> deleteFan(
+      String deviceName, String deviceId, String deviceType) async {
+    try {
+      await deviceCollection.deleteDevice(globalUserId, deviceId);
+      await getAllFans("Fan");
+    } catch (e) {
+      log("Error in deleting Fan from FanPageStateController ${e.toString()}");
+    }
+  }
 }
 
 abstract class FanPageStates {

@@ -46,8 +46,7 @@ class DeviceCollection {
     }
   }
 
-  Future<bool> deleteDevice(
-      String userId, String deviceId, String deviceName) async {
+  Future<bool> deleteDevice(String userId, String deviceId) async {
     try {
       await UserCollection.userCollection
           .doc(userId)

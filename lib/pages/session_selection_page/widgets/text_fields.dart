@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:form_validation/form_validation.dart';
 import 'package:smart_club_app/controllers/session_notifier.dart';
+import 'package:smart_club_app/util/screen_metaData.dart';
 
 class NameTextField extends ConsumerWidget {
   const NameTextField({super.key});
@@ -10,7 +11,7 @@ class NameTextField extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final nameTEC = ref.read(sessionProvider.notifier).nameTEC;
     return SizedBox(
-      width: 100,
+      width: getScreenWidth(context) * 0.5,
       child: Form(
         key: ref.read(sessionProvider.notifier).globalNameKey,
         child: TextFormField(
@@ -30,8 +31,8 @@ class NameTextField extends ConsumerWidget {
           controller: nameTEC,
           style: const TextStyle(color: Colors.white),
           decoration: InputDecoration(
-            hintText: "Your name",
-            hintStyle: const TextStyle(color: Colors.white54),
+            hintText: "Your name (Alphabets only)",
+            hintStyle: const TextStyle(color: Colors.white54, fontSize: 18),
             prefixIcon: const Icon(Icons.person, color: Colors.tealAccent),
             filled: true,
             fillColor: const Color(0xFF1F1F1F),
@@ -61,7 +62,7 @@ class KeyTextField extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final keyTEC = ref.read(sessionProvider.notifier).keyTEC;
     return SizedBox(
-      width: 100,
+      width: getScreenWidth(context) * 0.5,
       child: Form(
         key: ref.read(sessionProvider.notifier).globalSessionKey,
         child: TextFormField(
@@ -82,8 +83,8 @@ class KeyTextField extends ConsumerWidget {
           controller: keyTEC,
           style: const TextStyle(color: Colors.white),
           decoration: InputDecoration(
-            hintText: "Enter Session Key (Optional)",
-            hintStyle: const TextStyle(color: Colors.white54),
+            hintText: "Enter Session Key (In numbers only)",
+            hintStyle: const TextStyle(color: Colors.white54, fontSize: 18),
             prefixIcon: const Icon(Icons.key, color: Colors.tealAccent),
             filled: true,
             fillColor: const Color(0xFF1F1F1F),
@@ -113,7 +114,7 @@ class DurationTextField extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final durationTEC = ref.read(sessionProvider.notifier).durationTEC;
     return SizedBox(
-      width: 100,
+      width: getScreenWidth(context) * 0.5,
       child: Form(
         key: ref.read(sessionProvider.notifier).globalDurationKey,
         child: TextFormField(
@@ -121,7 +122,7 @@ class DurationTextField extends ConsumerWidget {
             final validator = Validator(
               validators: [
                 const RequiredValidator(),
-                const MaxLengthValidator(length: 2),
+                const MaxLengthValidator(length: 4),
                 const NumberValidator()
               ],
             );
@@ -135,7 +136,7 @@ class DurationTextField extends ConsumerWidget {
           style: const TextStyle(color: Colors.white),
           decoration: InputDecoration(
             hintText: "Session Duration (in minutes)",
-            hintStyle: const TextStyle(color: Colors.white54),
+            hintStyle: const TextStyle(color: Colors.white54, fontSize: 18),
             prefixIcon: const Icon(Icons.key, color: Colors.tealAccent),
             filled: true,
             fillColor: const Color(0xFF1F1F1F),

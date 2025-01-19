@@ -28,6 +28,16 @@ class BulbsPageStateController extends Notifier<BulbPageStates> {
       state = BulbPageErrorState(error: e.toString());
     }
   }
+
+  Future<void> deleteBulb(
+      String deviceName, String deviceId, String deviceType) async {
+    try {
+      await deviceCollection.deleteDevice(globalUserId, deviceId);
+      await getAllBulbs(deviceType);
+    } catch (e) {
+      log("Error in deleting Bulb from BulbPageStateController ${e.toString()}");
+    }
+  }
 }
 
 abstract class BulbPageStates {

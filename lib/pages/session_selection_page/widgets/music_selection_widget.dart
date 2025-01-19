@@ -23,32 +23,45 @@ class MusicSelectionBuilder extends ConsumerWidget {
         ],
       ),
       child: ListView.builder(
-        shrinkWrap: true,
+        shrinkWrap:
+            true, // Allows it to be contained inside another scrollable widget
+        physics:
+            const NeverScrollableScrollPhysics(), // Prevents inner scrolling
         itemCount: musicList.length,
         itemBuilder: (context, index) {
           final music = musicList[index];
           return Column(
             children: [
-              ListTile(
-                leading: const Icon(Icons.music_note, color: Colors.tealAccent),
-                title: Text(
-                  music.title,
-                  style: const TextStyle(color: Colors.white, fontSize: 16),
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 12.0), // Adds spacing
+                child: ListTile(
+                  leading: const Icon(
+                    Icons.music_note,
+                    color: Colors.tealAccent,
+                    size: 40, // Larger icon size
+                  ),
+                  title: Text(
+                    music.title,
+                    style: const TextStyle(
+                        color: Colors.white, fontSize: 22), // Larger font size
+                  ),
+                  trailing: Icon(
+                    size: 40,
+                    music.isSelected
+                        ? Icons.check_circle
+                        : Icons.check_circle_outline,
+                    color: Colors.tealAccent,
+                  ),
+                  onTap: () {
+                    ref
+                        .read(audioPlayerProvider.notifier)
+                        .setSource(music.url, isAsset: music.isAsset);
+                    ref
+                        .read(musicProvider.notifier)
+                        .selectMusic(musicList[index].id);
+                  },
                 ),
-                trailing: Icon(
-                  music.isSelected
-                      ? Icons.check_circle
-                      : Icons.check_circle_outline,
-                  color: Colors.tealAccent,
-                ),
-                onTap: () {
-                  ref
-                      .read(audioPlayerProvider.notifier)
-                      .setSource(music.url, isAsset: music.isAsset);
-                  ref
-                      .read(musicProvider.notifier)
-                      .selectMusic(musicList[index].id);
-                },
               ),
               if (index < musicList.length - 1)
                 const Divider(color: Colors.white54),

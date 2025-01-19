@@ -4,7 +4,7 @@ Widget buildHeader(String text) {
   return Text(
     text,
     style: const TextStyle(
-      fontSize: 24,
+      fontSize: 35,
       fontWeight: FontWeight.bold,
       color: Colors.tealAccent,
       shadows: [

@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:smart_club_app/pages/timer_page/widgets/music_on_off_state_controller.dart';
 
 /// Audio Player Provider
 final audioPlayerProvider =
@@ -34,18 +35,21 @@ class AudioPlayerNotifier extends Notifier<MusicPlayerStates> {
   /// Play the current track
   void play() async {
     if (!isPlaying) {
+      log("In Play method");
       await audioPlayer.play();
+      ref.read(musiccOnOFStateProvider.notifier).updateButtonState(true);
       isMusicPlaying = true;
-      state = MusicPlayerStartState();
+      state = MusicPlayerStartState(); // Trigger state change
     }
   }
 
-  /// Pause the current track
   void pause() async {
     if (isPlaying) {
+      log("In pause method");
+      ref.read(musiccOnOFStateProvider.notifier).updateButtonState(false);
       await audioPlayer.pause();
       isMusicPlaying = false;
-      state = MusicPlayerPauseState();
+      state = MusicPlayerPauseState(); // Trigger state change
     }
   }
 

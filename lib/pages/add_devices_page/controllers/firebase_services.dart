@@ -58,7 +58,7 @@ class FirebaseServices {
   // For deleting the device from firebase
   static Future<void> deleteDevice(String deviceName, String deviceId) async {
     log('Device Deleted: $deviceName | ID: $deviceId');
-    await deviceCollection.deleteDevice("user1", deviceId, deviceName);
+    await deviceCollection.deleteDevice("user1", deviceId);
   }
 
   static Future<void> updateDeviceStatusOnToggleSwtich(

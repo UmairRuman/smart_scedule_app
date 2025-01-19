@@ -1,40 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:smart_club_app/core/dialogs/admin_authentication_dialog.dart';
-import 'package:smart_club_app/core/global_functions.dart';
 
 final adminModeProvider =
     NotifierProvider<AdminModeNotifier, bool>(AdminModeNotifier.new);
 
 class AdminModeNotifier extends Notifier<bool> {
+  TextEditingController adminKeyController = TextEditingController();
   @override
   bool build() {
+    ref.onDispose(() {
+      adminKeyController.dispose();
+    });
     return false;
   }
 
-  Future<void> toggleAdminMode(BuildContext context) async {
-    if (!state) {
-      // Show a styled dialog for admin key input
-      final adminKey = await showDialog<String>(
-        context: context,
-        builder: (context) {
-          return adminAuthenticationDialog(context);
-        },
-      );
+  void toggleAdminMode(BuildContext context) async {
+    state = !state;
+    clearAdminKeyController();
+  }
 
-      // Validate the admin key
-      if (adminKey == await getAdminKey()) {
-        state = true;
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Invalid admin key'),
-            backgroundColor: Colors.redAccent,
-          ),
-        );
-      }
-    } else {
-      state = false;
-    }
+  void clearAdminKeyController() {
+    adminKeyController.clear();
   }
 }

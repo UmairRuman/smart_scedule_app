@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:smart_club_app/Notifiers/music_player_notifier.dart';
+import 'package:smart_club_app/core/dialogs/music_deletion_confimation_dialog.dart';
+import 'package:smart_club_app/pages/add_music/widgets/music_name_dialog.dart';
 
 class MusicAdditionPage extends ConsumerWidget {
   const MusicAdditionPage({super.key});
@@ -13,143 +15,132 @@ class MusicAdditionPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Add Music"),
+        title: const Text(
+          "Add Music",
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
+        ),
+        backgroundColor: Colors.teal,
       ),
-      body: Column(
+      body: Stack(
         children: [
-          Expanded(
-            child: Consumer(
-              builder: (context, ref, child) {
-                final musicList = ref.watch(musicProvider);
-                return ListView.builder(
-                  itemCount: musicList.length,
-                  itemBuilder: (context, index) {
-                    final music = musicList[index];
-                    return ListTile(
-                      leading: const Icon(Icons.music_note),
-                      title: Text(music.title),
-                      trailing: IconButton(
-                        icon: const Icon(Icons.delete, color: Colors.red),
-                        onPressed: () {
-                          _showDeleteConfirmationDialog(
-                            context,
-                            ref,
-                            music.id,
+          Column(
+            children: [
+              Expanded(
+                child: Consumer(
+                  builder: (context, ref, child) {
+                    final musicList = ref.watch(musicProvider);
+                    return Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF1F1F1F),
+                        borderRadius: BorderRadius.circular(10),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Colors.black45,
+                            blurRadius: 5,
+                            offset: Offset(2, 2),
+                          ),
+                        ],
+                      ),
+                      child: ListView.separated(
+                        separatorBuilder: (context, index) => const Divider(
+                          color: Colors.tealAccent,
+                          thickness: 1.0,
+                        ),
+                        itemCount: musicList.length,
+                        itemBuilder: (context, index) {
+                          final music = musicList[index];
+                          return ListTile(
+                            leading: Icon(
+                              Icons.music_note,
+                              color: Colors.tealAccent,
+                              size: 30,
+                            ),
+                            title: Text(
+                              music.title,
+                              style: const TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                            trailing: IconButton(
+                              icon: const Icon(
+                                Icons.delete,
+                                color: Colors.red,
+                                size: 30,
+                              ),
+                              onPressed: () {
+                                showMusicDeleteConfirmationDialog(
+                                  context,
+                                  ref,
+                                  music.id,
+                                );
+                              },
+                            ),
                           );
                         },
                       ),
                     );
                   },
-                );
-              },
-            ),
+                ),
+              ),
+              const SizedBox(height: 20),
+            ],
           ),
-          const SizedBox(height: 10),
-          ElevatedButton(
-            onPressed: () async {
-              final result = await FilePicker.platform.pickFiles(
-                type: FileType.custom,
-                allowedExtensions: [
-                  'mp3',
-                  'wav',
-                  'aac'
-                ], // Allowed audio formats
-              );
-              if (result != null) {
-                final file = File(result.files.single.path!);
-                final fileName = file.uri.pathSegments.last;
+          Positioned(
+            bottom: 20,
+            left: 20,
+            right: 20,
+            child: Center(
+              child: ElevatedButton.icon(
+                onPressed: () async {
+                  final result = await FilePicker.platform.pickFiles(
+                    type: FileType.custom,
+                    allowedExtensions: [
+                      'mp3',
+                      'wav',
+                      'aac'
+                    ], // Allowed audio formats
+                  );
+                  if (result != null) {
+                    final file = File(result.files.single.path!);
+                    final fileName = file.uri.pathSegments.last;
 
-                // Show a dialog to input music name
-                final musicName = await _showMusicNameInputDialog(context);
-                if (musicName != null && musicName.trim().isNotEmpty) {
-                  final directory = await getApplicationDocumentsDirectory();
-                  final savedFile =
-                      await file.copy('${directory.path}/$fileName');
+                    // Show a dialog to input music name
+                    final musicName = await showMusicNameInputDialog(context);
+                    if (musicName != null && musicName.trim().isNotEmpty) {
+                      final directory =
+                          await getApplicationDocumentsDirectory();
+                      final savedFile =
+                          await file.copy('${directory.path}/$fileName');
 
-                  // Update the music list
-                  ref
-                      .read(musicProvider.notifier)
-                      .uploadMusic(savedFile.path, musicName);
-                }
-              }
-            },
-            child: const Text("Add Music"),
+                      // Update the music list
+                      ref
+                          .read(musicProvider.notifier)
+                          .uploadMusic(savedFile.path, musicName);
+                    }
+                  }
+                },
+                icon: const Icon(Icons.add, color: Colors.black),
+                label: const Text(
+                  "Add Music",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.tealAccent,
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 15.0, horizontal: 30.0),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30.0),
+                  ),
+                  elevation: 10.0,
+                ),
+              ),
+            ),
           ),
         ],
       ),
-    );
-  }
-
-  Future<String?> _showMusicNameInputDialog(BuildContext context) async {
-    final TextEditingController controller = TextEditingController();
-
-    return await showDialog<String>(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text("Enter Music Name"),
-          content: TextField(
-            controller: controller,
-            decoration: const InputDecoration(
-              hintText: "Music Name",
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text("Cancel"),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                if (controller.text.trim().isNotEmpty) {
-                  Navigator.of(context).pop(controller.text.trim());
-                } else {
-                  // Show error if the name is empty
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text("Music name cannot be empty!"),
-                      backgroundColor: Colors.red,
-                    ),
-                  );
-                }
-              },
-              child: const Text("Save"),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void _showDeleteConfirmationDialog(
-    BuildContext context,
-    WidgetRef ref,
-    String musicId,
-  ) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text("Delete Music"),
-          content: const Text("Are you sure you want to delete this music?"),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text("Cancel"),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                ref.read(musicProvider.notifier).deleteMusic(musicId);
-                Navigator.of(context).pop();
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red, // Customize delete button color
-              ),
-              child: const Text("Delete"),
-            ),
-          ],
-        );
-      },
     );
   }
 }

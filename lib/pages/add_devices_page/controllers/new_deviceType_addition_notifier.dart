@@ -15,6 +15,11 @@ class NewDevicetypeAdditionNotifier
   List<Map<String, dynamic>> build() {
     addDeviceType("Fan", "Speed");
     addDeviceType("Bulb", "Brightness");
+    ref.onDispose(() {
+      controllers.forEach((key, value) {
+        value.dispose();
+      });
+    });
     return devices;
   }
 
@@ -54,11 +59,9 @@ class NewDevicetypeAdditionNotifier
   }
 
   // Optionally, you can add a method to clear all devices and controllers
-  void clearDevices() {
-    devices.clear();
-    controllers.forEach((_, controller) => controller.dispose());
-    controllers.clear();
-
-    state = [];
+  void clearDevicesTextFields() {
+    controllers.forEach((key, value) {
+      value.clear();
+    });
   }
 }
