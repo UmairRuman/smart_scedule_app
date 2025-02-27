@@ -28,9 +28,9 @@ class _DeviceSliderState extends ConsumerState<DeviceSlider> {
   void initState() {
     super.initState();
 
-    sliderValue = double.parse(
-        GerenrateNumberFromHexa.hexaIntoStringAccordingToDeviceType(
-            widget.device.type, widget.device.attributes.values.first));
+    // sliderValue = double.parse(
+    //     GerenrateNumberFromHexa.hexaIntoStringAccordingToDeviceType(
+    //         widget.device.type, widget.device.attributes.values.first));
 
     SchedulerBinding.instance.addPostFrameCallback((_) {
       ref.read(sliderValueProvider.notifier).intialSliderValue(sliderValue);

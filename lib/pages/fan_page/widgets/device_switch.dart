@@ -37,11 +37,11 @@ class _DeviceSwitchState extends ConsumerState<DeviceSwitch> {
     ref.watch(switchStateProvider);
 
     return Switch(
-      value: ref
-              .read(switchStateProvider.notifier)
-              .mapOfSwitchStates[widget.device.deviceId] ??
-          isSwitchOn,
+      value: isSwitchOn,
       onChanged: (value) {
+        setState(() {
+          isSwitchOn = value;
+        });
         ref
             .read(deviceStateProvider.notifier)
             .toggleSwitch(value, widget.device, globalUserId, context, ref);

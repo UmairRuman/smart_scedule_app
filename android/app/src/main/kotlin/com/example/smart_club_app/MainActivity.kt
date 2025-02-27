@@ -1,11 +1,16 @@
 package com.example.smart_club_app
 
+import android.app.AlertDialog
 import android.app.admin.DevicePolicyManager
 import android.content.ComponentName
 import android.content.Context
 import android.os.Bundle
+import android.text.InputType
 import android.view.View
+import android.view.accessibility.AccessibilityEvent
+import android.widget.EditText
 import android.widget.Toast
+import com.example.smart_club_app.DialogUtils.bringAppToForeground
 import io.flutter.embedding.android.FlutterActivity
 
 class MainActivity : FlutterActivity() {
@@ -38,13 +43,12 @@ class MainActivity : FlutterActivity() {
     }
 
     private fun enableImmersiveMode() {
-        // Hide navigation bar and status bar for a full-screen experience
         window.decorView.systemUiVisibility = (
-                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY or
-                        View.SYSTEM_UI_FLAG_FULLSCREEN or
-                        View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or
-                        View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
-                        View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                        or View.SYSTEM_UI_FLAG_FULLSCREEN
+                        or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                 )
     }
 
@@ -57,7 +61,15 @@ class MainActivity : FlutterActivity() {
     }
 
     override fun onBackPressed() {
-        // Disable the back button while in kiosk mode
-        Toast.makeText(this, "Back button disabled in kiosk mode", Toast.LENGTH_SHORT).show()
+        DialogUtils.showAdminKeyDialog(this) {
+            // Perform back button functionality only if admin key is correct
+            super.onBackPressed()
+        }
     }
+
+
+
+
 }
+
+

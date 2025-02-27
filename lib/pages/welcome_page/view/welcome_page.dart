@@ -25,17 +25,16 @@ class WelcomePageState extends ConsumerState<WelcomePage>
   void initState() {
     super.initState();
 
-    startListeningToFirestore(
-        context, globalUserId, _mqttService); // Listen to Firestore changes
     // Connect to MQTT and subscribe to topics
-    _mqttService.connect().then((_) async {
+    _mqttService.connect().then((_) {
       // Subscribe to user-specific topics using wildcards
       final userId =
           globalUserId; // Replace with dynamic user ID for multi-user apps
-      final topic =
-          'user/$userId/device/+/status'; // Wildcard for all user devices
-      // await Future.delayed(const Duration(seconds: 3));
+      final topic = 'user/$userId/device/+/status'; // Wildcard for all devices
+      const topic2 = "user123/+/init";
+
       _mqttService.subscribeToTopic(topic);
+      _mqttService.subscribeToTopic(topic2);
     });
 
     //Getting all devices

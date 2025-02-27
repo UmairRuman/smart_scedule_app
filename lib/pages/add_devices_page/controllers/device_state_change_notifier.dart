@@ -5,20 +5,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_club_app/collections/device_collection.dart';
 import 'package:smart_club_app/core/dialogs/progress_dialog.dart';
+import 'package:smart_club_app/core/services/service_locater.dart';
+import 'package:smart_club_app/core/usb_serial_services/usb_serial_service.dart';
 import 'package:smart_club_app/model/device.dart';
 import 'package:smart_club_app/pages/add_devices_page/controllers/firebase_services.dart';
 import 'package:smart_club_app/pages/add_devices_page/controllers/slide_value_controller.dart';
 import 'package:smart_club_app/pages/add_devices_page/controllers/switch_state_controller.dart';
 import 'package:smart_club_app/pages/add_devices_page/model/device_states.dart';
+import 'package:smart_club_app/protocol/Firestore_mqtt_Bridge.dart';
 import 'package:smart_club_app/protocol/mqt_service.dart';
 import 'package:smart_club_app/util/hexa_into_number.dart';
 import 'package:smart_club_app/util/maping_functions.dart';
+import 'package:usb_serial/usb_serial.dart';
 
 final deviceStateProvider =
     NotifierProvider<DeviceStateChangeNotifier, DeviceDataStates>(
         DeviceStateChangeNotifier.new);
 
 class DeviceStateChangeNotifier extends Notifier<DeviceDataStates> {
+  final usbSerialService = serviceLocator.get<UsbSerialService>();
   final MqttService mqttService = MqttService();
   final DeviceCollection deviceCollection = DeviceCollection.instance;
   //Controllers for adding new devices
@@ -31,18 +36,21 @@ class DeviceStateChangeNotifier extends Notifier<DeviceDataStates> {
   // When the switch is toggeled
   void toggleSwitch(bool value, Device device, String userId,
       BuildContext context, WidgetRef ref) async {
-    if (!mqttService.isConnected) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          duration: Duration(seconds: 1),
-          content: Text("MQTT is not connected. Cannot send the command.")));
-      log('MQTT is not connected. Cannot send the command.');
-      return;
-    }
     showProgressDialog(
         context: context,
         message: "Turning ${device.deviceName} ${value ? "On" : "Off"}");
 
     var command = getCommand(device.type, value ? "On" : "Off");
+
+    //Configuration for the USB port service
+    List<UsbDevice> devices = await usbSerialService.getListOfDevices();
+    if (devices.isNotEmpty) {
+      for (var usbDevice in devices) {
+        await usbSerialService.createAndInitiallizePort(usbDevice);
+        await usbSerialService.writeDataToPort(device, usbDevice);
+      }
+    }
+
     await FirebaseServices.updateDeviceStatusOnToggleSwtich(
         userId, device, command);
 
@@ -101,21 +109,21 @@ class DeviceStateChangeNotifier extends Notifier<DeviceDataStates> {
     await Future.delayed(const Duration(seconds: 2));
     state = DeviceDataLoadingState();
     var list = await FirebaseServices.getAllDevices();
-    for (var device in list) {
-      ref
-              .read(switchStateProvider.notifier)
-              .mapOfSwitchStates[device.deviceId] =
-          GerenrateNumberFromHexa.hexaIntoStringAccordingToDeviceType(
-                  device.type, device.status) ==
-              "On";
+    // for (var device in list) {
+    //   ref
+    //           .read(switchStateProvider.notifier)
+    //           .mapOfSwitchStates[device.deviceId] =
+    //       GerenrateNumberFromHexa.hexaIntoStringAccordingToDeviceType(
+    //               device.type, device.status) ==
+    //           "On";
 
-      ref
-              .read(sliderValueProvider.notifier)
-              .mapOfSliderValues[device.deviceId] =
-          double.parse(
-              GerenrateNumberFromHexa.hexaIntoStringAccordingToDeviceType(
-                  device.type, device.attributes.values.first));
-    }
+    //   ref
+    //           .read(sliderValueProvider.notifier)
+    //           .mapOfSliderValues[device.deviceId] =
+    //       double.parse(
+    //           GerenrateNumberFromHexa.hexaIntoStringAccordingToDeviceType(
+    //               device.type, device.attributes.values.first));
+    // }
     state = DeviceDataLoadedState(list: list);
   }
 

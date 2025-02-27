@@ -23,14 +23,8 @@ class FirebaseServices {
     var listOfDevices = await deviceCollection.getAllDevices("user1");
     Device device = Device(
       type: deviceType,
-      group: "Null",
       status: deviceType == "Bulb" ? "0x0200" : "0x0100",
       deviceName: deviceName,
-      attributes: {
-        '${attribute['attribute']}': deviceType == "Bulb" ? "0x0219" : "0x0119"
-      },
-      createdAt: DateTime.now(),
-      updatedAt: DateTime.now(),
       deviceId: "0${listOfDevices.length + 1} ${deviceName}",
     );
     await deviceCollection.addDevice(userId: "user1", device: device);

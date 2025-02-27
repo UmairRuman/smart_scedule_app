@@ -9,76 +9,79 @@ import 'package:smart_club_app/collections/user_collection.dart';
 import 'package:smart_club_app/main.dart';
 import 'package:smart_club_app/protocol/mqt_service.dart';
 
-Future<void> startListeningToFirestore(
-    BuildContext context, String userId, MqttService mqttService) async {
-  if (!mqttService.isConnected) {
-    await mqttService.connect();
-  }
+// Future<void> startListeningToFirestore(
+//     BuildContext context, String userId, MqttService mqttService) async {
+//   if (!mqttService.isConnected) {
+//     await mqttService.connect();
+//   }
 
-  UserCollection.userCollection
-      .doc(userId)
-      .collection(DeviceCollection.deviceCollection)
-      .snapshots()
-      .listen((snapshot) {
-    for (var change in snapshot.docChanges) {
-      if (change.type == DocumentChangeType.modified) {
-        final deviceData = change.doc.data();
+//   UserCollection.userCollection
+//       .doc(userId)
+//       .collection(DeviceCollection.deviceCollection)
+//       .snapshots()
+//       .listen((snapshot) {
+//     for (var change in snapshot.docChanges) {
+//       if (change.type == DocumentChangeType.modified) {
+//         final deviceData = change.doc.data();
 
-        if (deviceData != null) {
-          final deviceId = deviceData['deviceId'];
-          final status = deviceData['status'];
-          final attributes = deviceData['attributes'];
+//         if (deviceData != null) {
+//           final deviceId = deviceData['deviceId'];
+//           final status = deviceData['status'];
+//           final attributes = deviceData['attributes'];
 
-          if (deviceId != null && status != null && attributes != null) {
-            final deviceType = deviceData['type'];
-            String? attributeValue;
+//           if (deviceId != null && status != null && attributes != null) {
+//             final deviceType = deviceData['type'];
+//             String? attributeValue;
 
-            switch (deviceType) {
-              case 'Bulb':
-                attributeValue = attributes['Brightness'];
-                break;
-              case 'Fan':
-                attributeValue = attributes['Speed'];
-                break;
-              default:
-                attributeValue = attributes['CustomAttribute'];
-                break;
-            }
+//             switch (deviceType) {
+//               case 'Bulb':
+//                 attributeValue = attributes['Brightness'];
+//                 break;
+//               case 'Fan':
+//                 attributeValue = attributes['Speed'];
+//                 break;
+//               default:
+//                 attributeValue = attributes['CustomAttribute'];
+//                 break;
+//             }
 
-            if (mqttService.isConnected) {
-              publishDeviceUpdate(
-                userId,
-                deviceId,
-                status,
-                deviceType,
-                attributeValue,
-                mqttService,
-              );
-            } else {
-              Fluttertoast.showToast(
-                  msg: 'MQTT not connected. Skipping update for $deviceId.');
-            }
-          }
-        }
-      }
-    }
-  });
-}
+//             if (mqttService.isConnected) {
+//               publishDeviceUpdate(
+//                 userId,
+//                 deviceId,
+//                 status,
+//                 deviceType,
+//                 attributeValue,
+//                 mqttService,
+//               );
+//             } else {
+//               Fluttertoast.showToast(
+//                   msg: 'MQTT not connected. Skipping update for $deviceId.');
+//             }
+//           }
+//         }
+//       }
+//     }
+//   });
+// }
 
-void publishDeviceUpdate(
-  String userId,
-  String deviceId,
-  String status,
-  String deviceType,
-  String? attributeValue,
-  MqttService mqttService,
-) {
-  final topic = 'user/$userId/device/$deviceId/status';
-  final message = {
-    'status': status,
-    'type': deviceType,
-    'attribute': attributeValue ?? '',
-  };
-  mqttService.publishMessage(topic, message.toString());
-  log('Published device update: $message');
-}
+// void publishDeviceUpdate(
+//   String deviceName,
+//   String userId,
+//   String deviceId,
+//   String status,
+//   String deviceType,
+//   String? attributeValue,
+//   MqttService mqttService,
+// ) {
+//   final topic = 'user/$userId/device/$deviceId/status';
+//   final message = {
+//     'deviceId': deviceId,
+//     'deviceName': deviceName,
+//     'status': status,
+//     'type': deviceType,
+//     'attribute': attributeValue ?? '',
+//   };
+//   mqttService.publishMessage(topic, message.toString());
+//   log('Published device update: $message');
+// }

@@ -33,24 +33,18 @@ class DeviceAdditionNotifier extends Notifier<String> {
       required WidgetRef ref,
       required BuildContext context}) async {
     showProgressDialog(context: context, message: "Adding new Device");
-    var tec = ref
+    var deviceName = ref
             .read(newDevicetypeAdditionProvider.notifier)
             .controllers[deviceType]!
             .text ??
         "NDevice";
     var list = await deviceCollection.getAllDevices(globalUserId);
+    int getDeviceId = int.parse(list[list.length - 1].deviceId[1]);
     final device = Device(
       type: deviceType,
-      group: deviceGroup,
       status: deviceType == "Fan" ? "0x0100" : "0x0200",
-      deviceName: tec,
-      attributes: {
-        GerenrateNumberFromHexa.getDeviceAttributeAccordingToDeviceType(
-            deviceType): deviceType == "Fan" ? "0x0110" : "0x0210"
-      },
-      createdAt: DateTime.now(),
-      updatedAt: DateTime.now(),
-      deviceId: "0${(list.length + 1).toString()} $tec",
+      deviceName: deviceName,
+      deviceId: "0${getDeviceId + 1} $deviceName",
     );
 
     await deviceCollection.addDevice(userId: globalUserId, device: device);
